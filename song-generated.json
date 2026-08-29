@@ -1,0 +1,58 @@
+{
+  "tracks": [
+    {
+      "id": "fish",
+      "file": "assets/fish.mp3",
+      "sizeMB": 0.84,
+      "length": "0:55",
+      "extra": {
+        "source": "Local MP3 file in the assets folder",
+        "path": "assets/fish.mp3",
+        "format": "MP3",
+        "notes": "Generated from the current files in the assets folder.",
+        "tags": [
+          "minimal",
+          "lo-fi",
+          "desktop-friendly"
+        ],
+        "license": "Personal / demo use"
+      }
+    },
+    {
+      "id": "chocolate-cake",
+      "file": "assets/chocolate-cake.mp3",
+      "sizeMB": 2.28,
+      "length": "2:29",
+      "extra": {
+        "source": "Local MP3 file in the assets folder",
+        "path": "assets/chocolate-cake.mp3",
+        "format": "MP3",
+        "notes": "Generated from the current files in the assets folder.",
+        "tags": [
+          "minimal",
+          "lo-fi",
+          "desktop-friendly"
+        ],
+        "license": "Personal / demo use"
+      }
+    },
+    {
+      "id": "fr-jacque",
+      "file": "assets/fr-jacque.mp3",
+      "sizeMB": 1.1,
+      "length": "1:12",
+      "extra": {
+        "source": "Local MP3 file in the assets folder",
+        "path": "assets/fr-jacque.mp3",
+        "format": "MP3",
+        "notes": "Generated from the current files in the assets folder.",
+        "tags": [
+          "minimal",
+          "lo-fi",
+          "desktop-friendly"
+        ],
+        "license": "Personal / demo use"
+      }
+    }
+  ]
+}

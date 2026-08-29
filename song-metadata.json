@@ -1,0 +1,46 @@
+{
+  "tracks": [
+    {
+      "id": "fish",
+      "title": "1 2 3 4 5 Once I Caught A Fish Alive",
+      "artist": "Local Collection",
+      "icon": "�",
+      "file": "assets/fish.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "Local MP3 file in the assets folder",
+        "path": "assets/fish.mp3",
+        "format": "MP3",
+        "notes": "Manual metadata for the fish track."
+      }
+    },
+    {
+      "id": "chocolate-cake",
+      "title": "Chocolate Cake",
+      "artist": "Local Collection",
+      "icon": "🍰",
+      "file": "assets/chocolate-cake.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "Local MP3 file in the assets folder",
+        "path": "assets/chocolate-cake.mp3",
+        "format": "MP3",
+        "notes": "Manual metadata for the chocolate cake track."
+      }
+    },
+    {
+      "id": "fr-jacque",
+      "title": "Frère Jacque",
+      "artist": "Local Collection",
+      "icon": "🔔",
+      "file": "assets/fr-jacque.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "Local MP3 file in the assets folder",
+        "path": "assets/fr-jacque.mp3",
+        "format": "MP3",
+        "notes": "Manual metadata for the Frère Jacque track."
+      }
+    }
+  ]
+}

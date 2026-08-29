@@ -33,7 +33,7 @@
 
       body {
         min-height: 100vh;
-        padding: 24px 24px 120px;
+        padding: 24px 24px 180px;
       }
 
       .player-shell {
@@ -153,6 +153,7 @@
         align-items: center;
         gap: 12px;
         min-width: 0;
+        flex: 1;
       }
 
       .track-icon {
@@ -162,11 +163,13 @@
         display: grid;
         place-items: center;
         font-size: 1.35rem;
+        font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
         background: rgba(255,255,255,0.04);
       }
 
       .track-copy {
         min-width: 0;
+        flex: 1;
       }
 
       .track-item strong {
@@ -180,6 +183,36 @@
 
       .track-item small {
         color: var(--muted);
+      }
+
+      .track-side {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .track-metrics {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+        color: var(--muted);
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+      }
+
+      .track-info-btn {
+        width: 26px;
+        height: 26px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 0.8rem;
+        cursor: pointer;
       }
 
       .track-index {
@@ -216,6 +249,7 @@
         display: grid;
         place-items: center;
         font-size: 3rem;
+        font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
         background: linear-gradient(135deg, rgba(122,199,255,0.18), rgba(255,255,255,0.05));
         border: 1px solid rgba(255,255,255,0.08);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
@@ -223,13 +257,45 @@
 
       .track-meta {
         text-align: left;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+      }
+
+      .track-title-viewport {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
       }
 
       .track-title {
         margin: 0;
         font-weight: 600;
-        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        font-size: clamp(1.45rem, 2.1vw, 2.5rem);
         letter-spacing: -0.05em;
+        line-height: 1.12;
+        white-space: nowrap;
+        display: inline-block;
+        min-width: max-content;
+        max-width: max-content;
+        padding-right: 2rem;
+        animation: none;
+      }
+
+      .track-title.is-marquee {
+        animation: title-scroll var(--title-duration, 12s) ease-in-out infinite;
+      }
+
+      @keyframes title-scroll {
+        0%, 10% {
+          transform: translateX(0);
+        }
+        50% {
+          transform: translateX(var(--title-shift, -40px));
+        }
+        90%, 100% {
+          transform: translateX(0);
+        }
       }
 
       .track-artist {
@@ -259,74 +325,6 @@
         font-size: 0.7rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-      }
-
-      .progress-wrap {
-        margin-top: 18px;
-      }
-
-      .time-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.76rem;
-        letter-spacing: 0.08em;
-        color: var(--muted);
-        margin-bottom: 10px;
-      }
-
-      input[type="range"] {
-        width: 100%;
-        accent-color: var(--accent-strong);
-        cursor: pointer;
-      }
-
-      .controls {
-        position: fixed;
-        left: 50%;
-        bottom: 20px;
-        transform: translateX(-50%);
-        width: min(100% - 24px, 760px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 18px;
-        padding: 14px 18px;
-        border-radius: 18px;
-        background: rgba(11, 16, 25, 0.88);
-        border: 1px solid rgba(255,255,255,0.08);
-        backdrop-filter: blur(18px);
-        box-shadow: 0 18px 42px rgba(0,0,0,0.35);
-        z-index: 20;
-      }
-
-      .control-btn {
-        border: 1px solid rgba(255,255,255,0.12);
-        background: rgba(255,255,255,0.03);
-        color: var(--text);
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        font-size: 1.05rem;
-        cursor: pointer;
-        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-      }
-
-      .control-btn:hover,
-      .control-btn:focus-visible {
-        transform: translateY(-1px);
-        border-color: rgba(255,255,255,0.26);
-        background: rgba(255,255,255,0.06);
-        outline: none;
-      }
-
-      .play-toggle {
-        width: 64px;
-        height: 64px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-        color: #061118;
-        font-size: 1.2rem;
-        border: none;
-        box-shadow: 0 16px 30px rgba(122,199,255,0.26);
       }
 
       .track-info {
@@ -366,9 +364,78 @@
         font-family: "Consolas", "SFMono-Regular", monospace;
       }
 
+      .player-dock {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        width: min(100% - 24px, 760px);
+        padding: 14px 18px 12px;
+        border-radius: 18px;
+        background: rgba(11, 16, 25, 0.88);
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 18px 42px rgba(0,0,0,0.35);
+        z-index: 20;
+      }
+
+      .player-progress-row {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) 42px;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+      }
+
+      .player-progress-row input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent-strong);
+        cursor: pointer;
+      }
+
+      .player-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .control-btn {
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      }
+
+      .control-btn:hover,
+      .control-btn:focus-visible {
+        transform: translateY(-1px);
+        border-color: rgba(255,255,255,0.26);
+        background: rgba(255,255,255,0.06);
+        outline: none;
+      }
+
+      .play-toggle {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        color: #061118;
+        font-size: 1.2rem;
+        border: none;
+        box-shadow: 0 16px 30px rgba(122,199,255,0.26);
+      }
+
       @media (max-width: 760px) {
         body {
-          padding: 14px 14px 120px;
+          padding: 14px 14px 170px;
         }
 
         .player-shell {
@@ -390,9 +457,18 @@
           font-size: 2.3rem;
         }
 
-        .controls {
+        .player-dock {
           gap: 12px;
-          padding: 12px 14px;
+          padding: 12px 14px 10px;
+        }
+
+        .player-progress-row {
+          grid-template-columns: 36px minmax(0, 1fr) 36px;
+          gap: 8px;
+        }
+
+        .player-controls {
+          gap: 12px;
         }
       }
     </style>
@@ -423,7 +499,9 @@
             <div class="song-icon" id="songIcon" aria-label="Song icon">🎵</div>
 
             <div class="track-meta">
-              <h1 class="track-title" id="trackTitle">Chocolate Cake</h1>
+              <div class="track-title-viewport">
+                <h1 class="track-title" id="trackTitle">Chocolate Cake</h1>
+              </div>
               <div class="track-artist" id="trackArtist">Local Collection</div>
 
               <div class="meta-row">
@@ -433,97 +511,29 @@
             </div>
           </div>
 
-          <div class="progress-wrap">
-            <div class="time-row">
+          <div class="player-dock" aria-label="Player controls">
+            <div class="player-progress-row">
               <span id="currentTime">0:00</span>
+              <input id="progress" type="range" min="0" max="100" step="0.1" value="0" aria-label="Track progress" />
               <span id="totalTime">0:00</span>
             </div>
-            <input id="progress" type="range" min="0" max="100" step="0.1" value="0" aria-label="Track progress" />
+
+            <div class="player-controls">
+              <button class="control-btn" id="prevBtn" aria-label="Previous track">⏮</button>
+              <button class="control-btn play-toggle" id="playPauseBtn" aria-label="Play or pause">▶</button>
+              <button class="control-btn" id="nextBtn" aria-label="Next track">⏭</button>
+            </div>
           </div>
         </section>
-      </div>
-
-      <div class="controls" aria-label="Player controls">
-        <button class="control-btn" id="prevBtn" aria-label="Previous track">⏮</button>
-        <button class="control-btn play-toggle" id="playPauseBtn" aria-label="Play or pause">▶</button>
-        <button class="control-btn" id="nextBtn" aria-label="Next track">⏭</button>
       </div>
     </div>
 
     <audio id="audio" preload="none"></audio>
 
     <script>
-      const tracks = [
-  {
-    "title": "1 2 3 4 5 Once I Caught A Fish Alive",
-    "artist": "Local Collection",
-    "icon": "⏳",
-    "file": "assets/fish.mp3",
-    "sizeMB": 0.84,
-    "length": "0:55",
-    "accent": "#f6b87c",
-    "extra": {
-      "source": "Local MP3 file in the assets folder",
-      "path": "assets/fish.mp3",
-      "format": "MP3",
-      "notes": "Generated from the current files in the assets folder.",
-      "tags": [
-        "minimal",
-        "lo-fi",
-        "desktop-friendly"
-      ],
-      "license": "Personal / demo use",
-      "sizeMB": 0.84,
-      "length": "0:55"
-    }
-  },
-  {
-    "title": "Chocolate Cake",
-    "artist": "Local Collection",
-    "icon": "🍫",
-    "file": "assets/chocolate-cake.mp3",
-    "sizeMB": 2.28,
-    "length": "2:29",
-    "accent": "#f6b87c",
-    "extra": {
-      "source": "Local MP3 file in the assets folder",
-      "path": "assets/chocolate-cake.mp3",
-      "format": "MP3",
-      "notes": "Generated from the current files in the assets folder.",
-      "tags": [
-        "minimal",
-        "lo-fi",
-        "desktop-friendly"
-      ],
-      "license": "Personal / demo use",
-      "sizeMB": 2.28,
-      "length": "2:29"
-    }
-  },
-  {
-    "title": "Frère Jacque",
-    "artist": "Local Collection",
-    "icon": "⭐",
-    "file": "assets/fr-jacque.mp3",
-    "sizeMB": 1.1,
-    "length": "1:12",
-    "accent": "#f6b87c",
-    "extra": {
-      "source": "Local MP3 file in the assets folder",
-      "path": "assets/fr-jacque.mp3",
-      "format": "MP3",
-      "notes": "Generated from the current files in the assets folder.",
-      "tags": [
-        "minimal",
-        "lo-fi",
-        "desktop-friendly"
-      ],
-      "license": "Personal / demo use",
-      "sizeMB": 1.1,
-      "length": "1:12"
-    }
-  }
-];
+      let tracks = [];
+      let currentIndex = 0;
+      let isPlaying = false;
 
       const audio = document.getElementById("audio");
       const playPauseBtn = document.getElementById("playPauseBtn");
@@ -542,20 +552,15 @@
       const trackInfo = document.getElementById("trackInfo");
       const infoJson = document.getElementById("infoJson");
 
-      let currentIndex = 0;
-      let isPlaying = false;
-
       function formatTime(seconds) {
         if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
         const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60)
-          .toString()
-          .padStart(2, "0");
+        const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
         return `${mins}:${secs}`;
       }
 
       function updateTrackMeta() {
-        const currentTrack = tracks[currentIndex];
+        const currentTrack = tracks[currentIndex] || {};
         const sizeText = Number.isFinite(currentTrack.sizeMB)
           ? `${Number(currentTrack.sizeMB).toFixed(2)} MB`
           : "0.00 MB";
@@ -568,14 +573,20 @@
       }
 
       function updateInfoPanel() {
-        const currentTrack = tracks[currentIndex];
-        infoJson.textContent = JSON.stringify(currentTrack.extra, null, 2);
+        const currentTrack = tracks[currentIndex] || {};
+        infoJson.textContent = JSON.stringify(currentTrack.extra || {}, null, 2);
       }
 
       function renderPlaylist() {
+        if (!tracks.length) return;
+
         trackList.innerHTML = tracks
           .map((track, index) => {
             const activeClass = index === currentIndex ? "active" : "";
+            const sizeText = Number.isFinite(track.sizeMB)
+              ? `${Number(track.sizeMB).toFixed(2)} MB`
+              : "0.00 MB";
+            const durationText = track.length || "0:00";
             return `
               <li class="track-item ${activeClass}" data-index="${index}" tabindex="0" aria-label="Play ${track.title}">
                 <div class="track-item-main">
@@ -585,14 +596,30 @@
                     <small>${track.artist}</small>
                   </div>
                 </div>
-                <div class="track-index">${index + 1}</div>
+
+                <div class="track-side">
+                  <div class="track-metrics">
+                    <span>${sizeText}</span>
+                    <span>${durationText}</span>
+                  </div>
+                  <button
+                    class="track-info-btn"
+                    type="button"
+                    data-info-index="${index}"
+                    aria-label="Toggle extra info for ${track.title}"
+                  >i</button>
+                  <div class="track-index">${index + 1}</div>
+                </div>
               </li>
             `;
           })
           .join("");
 
         for (const item of trackList.querySelectorAll(".track-item")) {
-          item.addEventListener("click", () => selectTrack(Number(item.dataset.index)));
+          item.addEventListener("click", (event) => {
+            if (event.target.closest(".track-info-btn")) return;
+            selectTrack(Number(item.dataset.index));
+          });
           item.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
@@ -600,18 +627,90 @@
             }
           });
         }
+
+        for (const infoBtn of trackList.querySelectorAll(".track-info-btn")) {
+          infoBtn.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const index = Number(infoBtn.dataset.infoIndex);
+            currentIndex = index;
+            setTrackVisuals();
+            trackInfo.classList.add("visible");
+          });
+        }
       }
 
       function setTrackVisuals() {
-        const currentTrack = tracks[currentIndex];
-        trackTitle.textContent = currentTrack.title;
-        trackArtist.textContent = currentTrack.artist;
+        const currentTrack = tracks[currentIndex] || {};
+        trackTitle.textContent = currentTrack.title || "Loading...";
+        trackTitle.classList.remove("is-marquee");
+        trackTitle.style.removeProperty("--title-shift");
+        trackTitle.style.removeProperty("--title-duration");
+
+        const viewportWidth = trackTitle.parentElement?.clientWidth || 0;
+        const scrollWidth = trackTitle.scrollWidth;
+        if (scrollWidth > viewportWidth + 4) {
+          const shift = `${Math.max(12, scrollWidth - viewportWidth + 24)}px`;
+          trackTitle.style.setProperty("--title-shift", `-${shift}`);
+          trackTitle.style.setProperty("--title-duration", `${Math.max(8, Math.round(scrollWidth / 26))}s`);
+          trackTitle.classList.add("is-marquee");
+        }
+
+        trackArtist.textContent = currentTrack.artist || "Local Collection";
         updateTrackMeta();
         updateInfoPanel();
         renderPlaylist();
       }
 
+      async function loadTrackData() {
+        try {
+          const [manualResponse, generatedResponse] = await Promise.all([
+            fetch("song-metadata.json"),
+            fetch("song-generated.json")
+          ]);
+
+          if (!manualResponse.ok || !generatedResponse.ok) {
+            throw new Error("Playlist JSON files are missing.");
+          }
+
+          const manualPayload = await manualResponse.json();
+          const generatedPayload = await generatedResponse.json();
+          const manualList = Array.isArray(manualPayload?.tracks) ? manualPayload.tracks : [];
+          const generatedMap = new Map();
+
+          for (const track of Array.isArray(generatedPayload?.tracks) ? generatedPayload.tracks : []) {
+            const key = track.id || track.file;
+            if (key) generatedMap.set(key, track);
+          }
+
+          tracks = manualList.map((track) => {
+            const key = track.id || track.file;
+            const generated = generatedMap.get(key) || generatedMap.get(track.file) || {};
+            return {
+              ...track,
+              ...generated,
+              extra: {
+                ...(track.extra || {}),
+                ...(generated.extra || {})
+              }
+            };
+          });
+        } catch (error) {
+          console.error(error);
+          tracks = [];
+        }
+
+        if (!tracks.length) {
+          currentTimeEl.textContent = "0:00";
+          totalTimeEl.textContent = "0:00";
+          return;
+        }
+
+        loadTrack(0, false);
+      }
+
       function loadTrack(index, shouldAutoplay = false) {
+        if (!tracks.length) return;
+
         currentIndex = (index + tracks.length) % tracks.length;
         const currentTrack = tracks[currentIndex];
 
@@ -640,6 +739,8 @@
       }
 
       function togglePlay() {
+        if (!tracks.length) return;
+
         const currentTrack = tracks[currentIndex];
 
         if (!audio.src || !audio.src.endsWith(currentTrack.file)) {
@@ -691,10 +792,10 @@
         }
       });
 
-      loadTrack(0);
       playPauseBtn.textContent = "▶";
       currentTimeEl.textContent = "0:00";
       totalTimeEl.textContent = "0:00";
+      loadTrackData();
     </script>
   </body>
 </html>
