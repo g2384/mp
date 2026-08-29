@@ -215,18 +215,6 @@
         cursor: pointer;
       }
 
-      .track-index {
-        width: 28px;
-        height: 28px;
-        border-radius: 10px;
-        display: grid;
-        place-items: center;
-        background: rgba(255,255,255,0.04);
-        color: var(--muted);
-        font-size: 0.75rem;
-        flex-shrink: 0;
-      }
-
       .main-panel {
         padding: 20px 18px 16px;
         display: flex;
@@ -614,7 +602,6 @@
                     data-info-index="${index}"
                     aria-label="Toggle extra info for ${track.title}"
                   >i</button>
-                  <div class="track-index">${index + 1}</div>
                 </div>
               </li>
             `;
