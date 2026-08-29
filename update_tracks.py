@@ -98,6 +98,63 @@ def read_id3_metadata(path: Path) -> tuple[str, str]:
     return fallback_title, "Local Collection"
 
 
+ICON_KEYWORDS = {
+    "cake": "🍰",
+    "chocolate": "🍫",
+    "count": "🔢",
+    "number": "🔢",
+    "once": "⏳",
+    "caught": "🐟",
+    "fish": "🐟",
+    "bird": "🐦",
+    "song": "🎶",
+    "music": "🎵",
+    "melody": "🎼",
+    "dance": "💃",
+    "star": "⭐",
+    "moon": "🌙",
+    "happy": "😄",
+    "love": "💖",
+    "heart": "💖",
+    "jazz": "🎷",
+    "piano": "🎹",
+    "drum": "🥁",
+    "violin": "🎻",
+    "radio": "📻",
+    "party": "🎉",
+    "flash": "⚡",
+    "night": "🌙",
+    "dream": "💭",
+    "rain": "🌧️",
+}
+
+ICON_POOL = ["🎵", "🎶", "🎼", "🎹", "🥁", "🎻", "🎧", "🎤", "📻", "🎷", "✨", "🌙", "⭐", "🎉", "💃"]
+
+
+def choose_icon_for_title(title: str, used_icons: set[str]) -> str:
+    normalized = re.sub(r"[^a-z0-9]+", " ", (title or "").lower()).strip()
+    words = [word for word in normalized.split() if word]
+
+    for word in words:
+        icon = ICON_KEYWORDS.get(word)
+        if icon and icon not in used_icons:
+            used_icons.add(icon)
+            return icon
+
+    seed = sum(ord(char) for char in title or "") % len(ICON_POOL)
+    for offset in range(len(ICON_POOL)):
+        candidate = ICON_POOL[(seed + offset) % len(ICON_POOL)]
+        if candidate not in used_icons:
+            used_icons.add(candidate)
+            return candidate
+
+    fallback = "🎵"
+    while fallback in used_icons:
+        fallback = "🎶" if fallback == "🎵" else "🎵"
+    used_icons.add(fallback)
+    return fallback
+
+
 def mp3_duration_seconds(path: Path) -> float:
     data = path.read_bytes()
     if len(data) < 4:
@@ -158,9 +215,10 @@ def mp3_duration_seconds(path: Path) -> float:
     return total_samples / sample_rate if sample_rate else 0.0
 
 
-def build_track_entry(path: Path, used_names: set[str]) -> dict:
+def build_track_entry(path: Path, used_names: set[str], used_icons: set[str]) -> dict:
     title, artist = read_id3_metadata(path)
     file_stem = sanitize_file_stem(title, used_names)
+    icon = choose_icon_for_title(title, used_icons)
     target_path = path.with_name(f"{file_stem}.mp3")
 
     if target_path.exists() and target_path != path:
@@ -181,7 +239,7 @@ def build_track_entry(path: Path, used_names: set[str]) -> dict:
     return {
         "title": title,
         "artist": artist or "Local Collection",
-        "icon": "🎵",
+        "icon": icon,
         "file": target_path.relative_to(ROOT).as_posix(),
         "sizeMB": round(size_mb, 2),
         "length": length,
@@ -212,10 +270,11 @@ def write_tracks_into_html(tracks: list[dict]) -> None:
 def main() -> None:
     ASSET_DIR.mkdir(exist_ok=True)
     used_names: set[str] = set()
+    used_icons: set[str] = set()
     entries: list[dict] = []
 
     for mp3_path in sorted(ASSET_DIR.glob("*.mp3")):
-        entries.append(build_track_entry(mp3_path, used_names))
+        entries.append(build_track_entry(mp3_path, used_names, used_icons))
 
     if not entries:
         raise RuntimeError(f"No .mp3 files were found in {ASSET_DIR}.")
