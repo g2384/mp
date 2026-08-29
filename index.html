@@ -756,7 +756,7 @@
           e.stopPropagation();
           currentIndex = Number(infoBtn.dataset.infoIndex);
           setTrackVisuals();
-          trackInfo.classList.add("visible");
+          trackInfo.classList.toggle("visible");
         } else {
           const item = e.target.closest(".track-item");
           if (item) selectTrack(Number(item.dataset.index));
