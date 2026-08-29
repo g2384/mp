@@ -264,22 +264,38 @@
 
       .track-title-viewport {
         width: 100%;
+        overflow: hidden;
         position: relative;
       }
 
       .track-title {
         margin: 0;
         font-weight: 600;
-        font-size: clamp(1.05rem, 1.85vw, 1.85rem);
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        word-break: normal;
-        overflow-wrap: break-word;
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        white-space: normal;
-        padding-right: 0;
+        font-size: clamp(1.45rem, 2.1vw, 2.5rem);
+        letter-spacing: -0.05em;
+        line-height: 1.12;
+        white-space: nowrap;
+        display: inline-block;
+        min-width: max-content;
+        max-width: max-content;
+        padding-right: 2rem;
+        animation: none;
+      }
+
+      .track-title.is-marquee {
+        animation: title-scroll var(--title-duration, 12s) ease-in-out infinite;
+      }
+
+      @keyframes title-scroll {
+        0%, 10% {
+          transform: translateX(0);
+        }
+        50% {
+          transform: translateX(var(--title-shift, -40px));
+        }
+        90%, 100% {
+          transform: translateX(0);
+        }
       }
 
       .track-artist {
@@ -346,20 +362,6 @@
         line-height: 1.6;
         color: var(--text);
         font-family: "Consolas", "SFMono-Regular", monospace;
-      }
-
-      .now-playing-title {
-        margin: 0 0 10px;
-        min-height: 1.25em;
-        text-align: center;
-        color: var(--text);
-        font-size: 0.82rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .player-dock {
@@ -559,17 +561,24 @@
         return `${mins}:${secs}`;
       }
 
+      function formatTrackDisplay(track) {
+        const size = Number.isFinite(track.sizeMB) ? `${Number(track.sizeMB).toFixed(2)} MB` : "0.00 MB";
+        const duration = track.length || "0:00";
+        return { size, duration };
+      }
+
+      function updatePlayButton() {
+        playPauseBtn.textContent = isPlaying ? "❚❚" : "▶";
+      }
+
       function updateTrackMeta() {
         const currentTrack = tracks[currentIndex] || {};
-        const sizeText = Number.isFinite(currentTrack.sizeMB)
-          ? `${Number(currentTrack.sizeMB).toFixed(2)} MB`
-          : "0.00 MB";
-        const durationText = currentTrack.length || formatTime(audio.duration || 0);
+        const { size, duration } = formatTrackDisplay(currentTrack);
 
         songIcon.textContent = currentTrack.icon || "🎵";
-        trackSize.textContent = sizeText;
-        trackLength.textContent = durationText;
-        totalTimeEl.textContent = durationText;
+        trackSize.textContent = size;
+        trackLength.textContent = duration || formatTime(audio.duration || 0);
+        totalTimeEl.textContent = trackLength.textContent;
       }
 
       function updateInfoPanel() {
@@ -583,10 +592,7 @@
         trackList.innerHTML = tracks
           .map((track, index) => {
             const activeClass = index === currentIndex ? "active" : "";
-            const sizeText = Number.isFinite(track.sizeMB)
-              ? `${Number(track.sizeMB).toFixed(2)} MB`
-              : "0.00 MB";
-            const durationText = track.length || "0:00";
+            const { size, duration } = formatTrackDisplay(track);
             return `
               <li class="track-item ${activeClass}" data-index="${index}" tabindex="0" aria-label="Play ${track.title}">
                 <div class="track-item-main">
@@ -599,8 +605,8 @@
 
                 <div class="track-side">
                   <div class="track-metrics">
-                    <span>${sizeText}</span>
-                    <span>${durationText}</span>
+                    <span>${size}</span>
+                    <span>${duration}</span>
                   </div>
                   <button
                     class="track-info-btn"
@@ -614,44 +620,16 @@
             `;
           })
           .join("");
-
-        for (const item of trackList.querySelectorAll(".track-item")) {
-          item.addEventListener("click", (event) => {
-            if (event.target.closest(".track-info-btn")) return;
-            selectTrack(Number(item.dataset.index));
-          });
-          item.addEventListener("keydown", (event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              selectTrack(Number(item.dataset.index));
-            }
-          });
-        }
-
-        for (const infoBtn of trackList.querySelectorAll(".track-info-btn")) {
-          infoBtn.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const index = Number(infoBtn.dataset.infoIndex);
-            currentIndex = index;
-            setTrackVisuals();
-            trackInfo.classList.add("visible");
-          });
-        }
       }
 
       function setTrackVisuals() {
         const currentTrack = tracks[currentIndex] || {};
         trackTitle.textContent = currentTrack.title || "Loading...";
-        trackTitle.classList.remove("is-marquee");
-        trackTitle.style.removeProperty("--title-shift");
-        trackTitle.style.removeProperty("--title-duration");
-
         trackArtist.textContent = currentTrack.artist || "Local Collection";
+        nowPlayingTitle.textContent = currentTrack.title || "";
         updateTrackMeta();
         updateInfoPanel();
         renderPlaylist();
-        // Update now-playing title above controls
-        nowPlayingTitle.textContent = currentTrack.title || "";
       }
 
       async function loadTrackData() {
@@ -720,14 +698,15 @@
           audio.load();
           audio.play().catch(() => {
             isPlaying = false;
-            playPauseBtn.textContent = "▶";
+            updatePlayButton();
           });
           isPlaying = true;
-          playPauseBtn.textContent = "❚❚";
+          updatePlayButton();
         }
       }
 
       function selectTrack(index) {
+        trackInfo.classList.remove("visible");
         loadTrack(index, false);
       }
 
@@ -744,15 +723,14 @@
         if (audio.paused) {
           audio.play().catch(() => {
             isPlaying = false;
-            playPauseBtn.textContent = "▶";
+            updatePlayButton();
           });
           isPlaying = true;
-          playPauseBtn.textContent = "❚❚";
         } else {
           audio.pause();
           isPlaying = false;
-          playPauseBtn.textContent = "▶";
         }
+        updatePlayButton();
       }
 
       playPauseBtn.addEventListener("click", togglePlay);
@@ -785,9 +763,30 @@
         }
       });
 
-      playPauseBtn.textContent = "▶";
+      trackList.addEventListener("click", (e) => {
+        const infoBtn = e.target.closest(".track-info-btn");
+        if (infoBtn) {
+          e.stopPropagation();
+          currentIndex = Number(infoBtn.dataset.infoIndex);
+          setTrackVisuals();
+          trackInfo.classList.add("visible");
+        } else {
+          const item = e.target.closest(".track-item");
+          if (item) selectTrack(Number(item.dataset.index));
+        }
+      });
+
+      trackList.addEventListener("keydown", (e) => {
+        if ((e.key === "Enter" || e.key === " ") && e.target.closest(".track-item")) {
+          e.preventDefault();
+          selectTrack(Number(e.target.closest(".track-item").dataset.index));
+        }
+      });
+
+      updatePlayButton();
       currentTimeEl.textContent = "0:00";
       totalTimeEl.textContent = "0:00";
+      trackInfo.classList.remove("visible");
       loadTrackData();
     </script>
   </body>
