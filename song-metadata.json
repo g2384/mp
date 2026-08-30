@@ -2,7 +2,7 @@
   "tracks": [
     {
       "id": "fish",
-      "title": "12345, Once I Caught A Fish Alive!",
+      "title": "12345, Once I Caught A Fish Alive",
       "artist": "Sing and Learn with Vicky",
       "icon": "🐟",
       "file": "assets/fish.mp3",
@@ -36,7 +36,7 @@
     },
     {
       "id": "mountain",
-      "title": "She'll Be Coming Round The Mountain!",
+      "title": "She'll Be Coming Round The Mountain",
       "artist": "Sing and Learn with Vicky",
       "icon": "⛰️",
       "file": "assets/mountain.mp3",
@@ -49,7 +49,7 @@
       "id": "horsey",
       "title": "Horsey, horsey don't you stop!",
       "artist": "Sing and Learn with Vicky",
-      "icon": "⛰️",
+      "icon": "🏇",
       "file": "assets/horsey.mp3",
       "accent": "#f6b87c",
       "extra": {
@@ -60,7 +60,7 @@
       "id": "ride",
       "title": "Ride A Cock Horse to Banbury Cross",
       "artist": "Sing and Learn with Vicky",
-      "icon": "⛰️",
+      "icon": "🐎",
       "file": "assets/ride.mp3",
       "accent": "#f6b87c",
       "extra": {
@@ -68,10 +68,21 @@
       }
     },
     {
+      "id": "bridge",
+      "title": "London Bridge Is Falling Down",
+      "artist": "Sing and Learn with Vicky",
+      "icon": "🌉",
+      "file": "assets/bridge.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=dQuKxjfDjmU"
+      }
+    },
+    {
       "id": "horsie",
       "title": "Horsie, horsie don't you stop!",
       "artist": "BBC Bitesize for Teachers",
-      "icon": "⛰️",
+      "icon": "🏇",
       "file": "assets/horsie.mp3",
       "accent": "#f6b87c",
       "extra": {
