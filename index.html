@@ -19,6 +19,7 @@
 
       * {
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
       }
 
       html, body {
@@ -452,6 +453,12 @@
         outline: none;
       }
 
+      .control-btn:active {
+        transform: scale(0.94);
+        border-color: rgba(255,255,255,0.32);
+        background: rgba(255,255,255,0.1);
+      }
+
       .play-toggle {
         width: 64px;
         height: 64px;
@@ -460,6 +467,12 @@
         font-size: 1.2rem;
         border: none;
         box-shadow: 0 16px 30px rgba(122,199,255,0.26);
+      }
+
+      .play-toggle:active {
+        transform: scale(0.94);
+        box-shadow: 0 10px 20px rgba(122,199,255,0.32);
+        filter: brightness(1.08);
       }
 
       @media (max-width: 760px) {
