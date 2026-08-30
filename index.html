@@ -597,23 +597,148 @@
       }
 
       @media (max-width: 420px) {
+        body {
+          padding: 6px;
+        }
+
+        .player-shell {
+          height: calc(100vh - 12px);
+          border-radius: 18px;
+        }
+
+        .topbar {
+          padding: 10px 12px 6px;
+        }
+
+        .layout {
+          gap: 8px;
+          padding: 4px 8px 8px;
+        }
+
+        .sidebar {
+          padding: 10px 8px 8px;
+          border-radius: 16px;
+        }
+
+        .playlist-label {
+          margin-bottom: 6px;
+        }
+
+        .track-list {
+          gap: 6px;
+          padding: 0 2px 2px 0;
+        }
+
+        .track-item {
+          padding: 6px 8px;
+          gap: 8px;
+          border-radius: 12px;
+        }
+
+        .track-item-main {
+          gap: 8px;
+        }
+
+        .track-icon {
+          width: 28px;
+          height: 28px;
+          font-size: 1.05rem;
+          border-radius: 9px;
+        }
+
         .track-metrics {
           display: none;
         }
 
+        .track-side {
+          gap: 6px;
+        }
+
+        .track-info-btn {
+          width: 22px;
+          height: 22px;
+          font-size: 0.7rem;
+        }
+
+        .main-panel {
+          padding: 12px 10px 10px;
+          border-radius: 16px;
+        }
+
+        .track-hero {
+          grid-template-columns: 52px minmax(0, 1fr);
+          gap: 10px;
+          margin-bottom: 10px;
+        }
+
+        .song-icon {
+          width: 52px;
+          height: 52px;
+          border-radius: 16px;
+          font-size: 1.7rem;
+        }
+
+        .track-title {
+          font-size: clamp(1rem, 5vw, 1.35rem);
+        }
+
+        .track-artist {
+          font-size: 0.7rem;
+          letter-spacing: 0.05em;
+          margin-top: 4px;
+        }
+
+        .meta-row {
+          gap: 5px;
+          margin-top: 8px;
+        }
+
         .meta-pill {
-          padding: 5px 8px;
-          font-size: 0.6rem;
+          padding: 4px 7px;
+          font-size: 0.58rem;
+        }
+
+        .player-dock {
+          margin: 0 8px 8px;
+          gap: 8px;
+          padding: 8px 12px 8px;
+          border-radius: 14px;
+        }
+
+        .player-progress-row {
+          grid-template-columns: 36px minmax(0, 1fr) 36px;
+          gap: 6px;
+          font-size: 0.66rem;
+          margin-bottom: 6px;
+        }
+
+        .player-controls {
+          gap: 8px;
         }
 
         .control-btn {
           width: 40px;
           height: 40px;
+          font-size: 0.9rem;
         }
 
         .play-toggle {
           width: 54px;
           height: 54px;
+          font-size: 1rem;
+        }
+
+        .now-playing-title {
+          font-size: 0.72rem;
+        }
+
+        .track-info.visible {
+          padding: 10px 8px;
+          max-height: 180px;
+        }
+
+        pre {
+          font-size: 0.66rem;
         }
       }
     </style>
