@@ -620,11 +620,6 @@
   </head>
   <body>
     <div class="player-shell">
-      <div class="topbar">
-        <div class="brand">Pulse</div>
-        <button class="info-toggle" id="infoToggle" aria-label="Toggle metadata">i</button>
-      </div>
-
       <div class="layout">
         <aside class="sidebar">
           <div class="playlist-label">
@@ -694,7 +689,6 @@
       const totalTimeEl = document.getElementById("totalTime");
       const progressInput = document.getElementById("progress");
       const trackList = document.getElementById("trackList");
-      const infoToggle = document.getElementById("infoToggle");
       const trackInfo = document.getElementById("trackInfo");
       const infoJson = document.getElementById("infoJson");
       const nowPlayingTitle = document.getElementById("nowPlayingTitle");
@@ -881,10 +875,6 @@
       prevBtn.addEventListener("click", () => loadTrack(currentIndex - 1, isPlaying));
       nextBtn.addEventListener("click", () => loadTrack(currentIndex + 1, isPlaying));
 
-      infoToggle.addEventListener("click", () => {
-        trackInfo.classList.toggle("visible");
-      });
-
       audio.addEventListener("loadedmetadata", () => {
         const durationText = formatTime(audio.duration || 0);
         totalTimeEl.textContent = durationText;
@@ -911,9 +901,18 @@
         const infoBtn = e.target.closest(".track-info-btn");
         if (infoBtn) {
           e.stopPropagation();
-          currentIndex = Number(infoBtn.dataset.infoIndex);
+          const targetIndex = Number(infoBtn.dataset.infoIndex);
+          const isSameTrack = targetIndex === currentIndex;
+          const wasVisible = trackInfo.classList.contains("visible");
+
+          currentIndex = targetIndex;
           setTrackVisuals();
-          trackInfo.classList.toggle("visible");
+
+          if (isSameTrack && wasVisible) {
+            trackInfo.classList.remove("visible");
+          } else {
+            trackInfo.classList.add("visible");
+          }
         } else {
           const item = e.target.closest(".track-item");
           if (item) selectTrack(Number(item.dataset.index));
