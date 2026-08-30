@@ -3,25 +3,23 @@
     {
       "id": "fish",
       "title": "12345, Once I Caught A Fish Alive!",
-      "artist": "Local Collection",
+      "artist": "Sing and Learn with Vicky",
       "icon": "🐟",
       "file": "assets/fish.mp3",
       "accent": "#f6b87c",
       "extra": {
-        "source": "Local MP3 file in the assets folder",
-        "path": "assets/fish.mp3"
+        "source": "https://www.youtube.com/watch?v=0sGejVVETEk"
       }
     },
     {
       "id": "chocolate-cake",
       "title": "Chocolate Cake",
-      "artist": "Local Collection",
+      "artist": "LearnEnglish Kids",
       "icon": "🍰",
       "file": "assets/chocolate-cake.mp3",
       "accent": "#f6b87c",
       "extra": {
-        "source": "Local MP3 file in the assets folder",
-        "path": "assets/chocolate-cake.mp3"
+        "source": "https://learnenglishkids.britishcouncil.org/listen-watch/songs/chocolate-cake"
       }
     },
     {
@@ -34,6 +32,50 @@
       "extra": {
         "source": "Local MP3 file in the assets folder",
         "path": "assets/fr-jacque.mp3"
+      }
+    },
+    {
+      "id": "mountain",
+      "title": "She'll Be Coming Round The Mountain!",
+      "artist": "Sing and Learn with Vicky",
+      "icon": "⛰️",
+      "file": "assets/mountain.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=iKnPT3JTBOI"
+      }
+    },
+    {
+      "id": "horsey",
+      "title": "Horsey, horsey don't you stop!",
+      "artist": "Sing and Learn with Vicky",
+      "icon": "⛰️",
+      "file": "assets/horsey.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=jgCcuBXxITw"
+      }
+    },
+    {
+      "id": "ride",
+      "title": "Ride A Cock Horse to Banbury Cross",
+      "artist": "Sing and Learn with Vicky",
+      "icon": "⛰️",
+      "file": "assets/ride.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=jgCcuBXxITw"
+      }
+    },
+    {
+      "id": "horsie",
+      "title": "Horsie, horsie don't you stop!",
+      "artist": "BBC Bitesize for Teachers",
+      "icon": "⛰️",
+      "file": "assets/horsie.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=W6MsHFSWfaU"
       }
     }
   ]

@@ -162,15 +162,7 @@ def build_generated_entry(track: dict, source_path: Path) -> dict:
         "id": track.get("id") or Path(file_path).stem,
         "file": file_path,
         "sizeMB": round(file_size_mb, 2),
-        "length": format_length(duration_seconds),
-        "extra": {
-            "source": "Local MP3 file in the assets folder",
-            "path": file_path,
-            "format": "MP3",
-            "notes": "Generated from the current files in the assets folder.",
-            "tags": ["minimal", "lo-fi", "desktop-friendly"],
-            "license": "Personal / demo use",
-        },
+        "length": format_length(duration_seconds)
     }
 
 
