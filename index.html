@@ -235,6 +235,72 @@
         opacity: 0.45;
       }
 
+      .play-mode-row {
+        margin-top: 14px;
+      }
+
+      .play-mode-control {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .play-mode-btn {
+        min-width: 0;
+        height: 34px;
+        padding: 0 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        border: 1px solid var(--line-dark);
+        border-right: 0;
+        background: transparent;
+        color: var(--panel-muted);
+        cursor: pointer;
+        font-size: 0.64rem;
+        white-space: nowrap;
+      }
+
+      .play-mode-btn:first-child {
+        border-radius: 5px 0 0 5px;
+      }
+
+      .play-mode-btn:last-child {
+        border-right: 1px solid var(--line-dark);
+        border-radius: 0 5px 5px 0;
+      }
+
+      .play-mode-btn:hover:not(:disabled),
+      .play-mode-btn:focus-visible {
+        position: relative;
+        z-index: 1;
+        background: var(--panel-soft);
+      }
+
+      .play-mode-btn:focus-visible {
+        outline-offset: -3px;
+      }
+
+      .play-mode-btn[aria-pressed="true"],
+      .play-mode-btn[aria-pressed="true"]:hover,
+      .play-mode-btn[aria-pressed="true"]:focus-visible {
+        border-color: var(--track-accent);
+        background: var(--track-accent);
+        color: var(--ink);
+      }
+
+      .play-mode-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .play-mode-btn svg {
+        width: 14px;
+        height: 14px;
+        flex: 0 0 auto;
+        stroke-width: 2;
+      }
+
       .player-controls {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -847,6 +913,14 @@
           margin-bottom: 6px;
         }
 
+        .play-mode-row {
+          margin-top: 8px;
+        }
+
+        .play-mode-btn {
+          height: 30px;
+        }
+
         .player-controls {
           margin-top: 8px;
         }
@@ -965,6 +1039,26 @@
               <input id="volume" type="range" min="0" max="1" step="0.05" value="0.8" aria-label="Volume" />
             </div>
           </div>
+
+          <div class="play-mode-row">
+            <div class="play-mode-control" role="group" aria-label="Playback mode">
+              <button class="play-mode-btn" type="button" data-play-mode="repeat-one" aria-pressed="false" title="Loop this song" disabled>
+                <span class="icon-fallback" aria-hidden="true">↻1</span>
+                <i data-lucide="repeat-1" aria-hidden="true"></i>
+                <span>Repeat one</span>
+              </button>
+              <button class="play-mode-btn" type="button" data-play-mode="play-next" aria-pressed="true" title="Automatically play songs in order" disabled>
+                <span class="icon-fallback" aria-hidden="true">→</span>
+                <i data-lucide="list-end" aria-hidden="true"></i>
+                <span>Auto play</span>
+              </button>
+              <button class="play-mode-btn" type="button" data-play-mode="shuffle" aria-pressed="false" title="Play every song once in a random order" disabled>
+                <span class="icon-fallback" aria-hidden="true">⇄</span>
+                <i data-lucide="shuffle" aria-hidden="true"></i>
+                <span>Shuffle</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1006,6 +1100,13 @@
       let infoTrackIndex = null;
       let isPlaying = false;
       let lastVolume = 0.8;
+      const PLAYBACK_MODES = Object.freeze({
+        repeatOne: "repeat-one",
+        playNext: "play-next",
+        shuffle: "shuffle"
+      });
+      let playbackMode = PLAYBACK_MODES.playNext;
+      let shuffleQueue = [];
 
       const audio = document.getElementById("audio");
       const artwork = document.getElementById("artwork");
@@ -1029,6 +1130,7 @@
       const nowPlayingTitle = document.getElementById("nowPlayingTitle");
       const trackPosition = document.getElementById("trackPosition");
       const playlistTotal = document.getElementById("playlistTotal");
+      const playbackModeButtons = Array.from(document.querySelectorAll(".play-mode-btn"));
 
       function formatTime(seconds) {
         if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -1097,6 +1199,44 @@
         prevBtn.disabled = !enabled;
         nextBtn.disabled = !enabled;
         progressInput.disabled = !enabled;
+        playbackModeButtons.forEach((button) => {
+          button.disabled = !enabled;
+        });
+      }
+
+      function setPlaybackMode(mode) {
+        if (!Object.values(PLAYBACK_MODES).includes(mode)) return;
+
+        if (mode === PLAYBACK_MODES.shuffle && playbackMode !== mode) {
+          resetShuffleQueue();
+        } else if (mode !== PLAYBACK_MODES.shuffle) {
+          shuffleQueue = [];
+        }
+
+        playbackMode = mode;
+        audio.loop = mode === PLAYBACK_MODES.repeatOne;
+        playbackModeButtons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.playMode === mode));
+        });
+      }
+
+      function resetShuffleQueue() {
+        shuffleQueue = tracks.map((_, index) => index).filter((index) => index !== currentIndex);
+
+        for (let index = shuffleQueue.length - 1; index > 0; index -= 1) {
+          const randomIndex = Math.floor(Math.random() * (index + 1));
+          [shuffleQueue[index], shuffleQueue[randomIndex]] = [shuffleQueue[randomIndex], shuffleQueue[index]];
+        }
+      }
+
+      function getNextTrackIndex() {
+        if (playbackMode !== PLAYBACK_MODES.shuffle) {
+          return currentIndex + 1;
+        }
+
+        if (tracks.length < 2) return currentIndex;
+        if (!shuffleQueue.length) resetShuffleQueue();
+        return shuffleQueue.shift();
       }
 
       function updatePlayButton() {
@@ -1309,6 +1449,7 @@
       function selectTrack(index) {
         closeInfoPanel();
         loadTrack(index, true);
+        if (playbackMode === PLAYBACK_MODES.shuffle) resetShuffleQueue();
       }
 
       function togglePlay() {
@@ -1322,8 +1463,14 @@
       }
 
       playPauseBtn.addEventListener("click", togglePlay);
-      prevBtn.addEventListener("click", () => loadTrack(currentIndex - 1, isPlaying));
-      nextBtn.addEventListener("click", () => loadTrack(currentIndex + 1, isPlaying));
+      prevBtn.addEventListener("click", () => {
+        loadTrack(currentIndex - 1, isPlaying);
+        if (playbackMode === PLAYBACK_MODES.shuffle) resetShuffleQueue();
+      });
+      nextBtn.addEventListener("click", () => loadTrack(getNextTrackIndex(), isPlaying));
+      playbackModeButtons.forEach((button) => {
+        button.addEventListener("click", () => setPlaybackMode(button.dataset.playMode));
+      });
 
       audio.addEventListener("play", () => {
         isPlaying = true;
@@ -1347,7 +1494,13 @@
       });
 
       audio.addEventListener("ended", () => {
-        loadTrack(currentIndex + 1, true);
+        if (playbackMode === PLAYBACK_MODES.repeatOne) {
+          audio.currentTime = 0;
+          playCurrentTrack();
+          return;
+        }
+
+        loadTrack(getNextTrackIndex(), true);
       });
 
       audio.addEventListener("error", () => {
@@ -1397,6 +1550,7 @@
       });
 
       audio.volume = 0.8;
+      setPlaybackMode(playbackMode);
       updatePlayButton();
       updateVolumeButton();
       refreshIcons();
