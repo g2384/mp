@@ -1,10 +1,10 @@
 {
   "tracks": [
     {
-      "id": "fish",
-      "file": "assets/fish.mp3",
-      "sizeMB": 0.84,
-      "length": "0:55"
+      "id": "horsie",
+      "file": "assets/horsie.mp3",
+      "sizeMB": 0.83,
+      "length": "0:54"
     },
     {
       "id": "chocolate-cake",
@@ -19,10 +19,10 @@
       "length": "1:12"
     },
     {
-      "id": "mountain",
-      "file": "assets/mountain.mp3",
-      "sizeMB": 2.03,
-      "length": "2:13"
+      "id": "fish",
+      "file": "assets/fish.mp3",
+      "sizeMB": 0.84,
+      "length": "0:55"
     },
     {
       "id": "horsey",
@@ -31,22 +31,22 @@
       "length": "0:38"
     },
     {
-      "id": "ride",
-      "file": "assets/ride.mp3",
-      "sizeMB": 0.6,
-      "length": "0:39"
-    },
-    {
       "id": "bridge",
       "file": "assets/bridge.mp3",
       "sizeMB": 0.86,
       "length": "0:56"
     },
     {
-      "id": "horsie",
-      "file": "assets/horsie.mp3",
-      "sizeMB": 0.83,
-      "length": "0:54"
+      "id": "ride",
+      "file": "assets/ride.mp3",
+      "sizeMB": 0.6,
+      "length": "0:39"
+    },
+    {
+      "id": "mountain",
+      "file": "assets/mountain.mp3",
+      "sizeMB": 2.03,
+      "length": "2:13"
     }
   ]
 }
