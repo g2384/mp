@@ -80,13 +80,24 @@
     },
     {
       "id": "horsie",
-      "title": "Horsie, horsie don't you stop!",
+      "title": "Horsie, horsie don't you stop",
       "artist": "BBC Bitesize for Teachers",
       "icon": "🏇",
       "file": "assets/horsie.mp3",
       "accent": "#f6b87c",
       "extra": {
         "source": "https://www.youtube.com/watch?v=W6MsHFSWfaU"
+      }
+    },
+    {
+      "id": "spider",
+      "title": "Incy Wincy Spider",
+      "artist": "Sing and Learn with Vicky",
+      "icon": "🕷️",
+      "file": "assets/spider.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=XP-SGUEeK4I"
       }
     }
   ]
