@@ -30,8 +30,7 @@
       "file": "assets/fr-jacque.mp3",
       "accent": "#f6b87c",
       "extra": {
-        "source": "Local MP3 file in the assets folder",
-        "path": "assets/fr-jacque.mp3"
+        "source": "https://www.youtube.com/watch?v=XrPiWFxmY24"
       }
     },
     {
