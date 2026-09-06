@@ -25,7 +25,7 @@
     {
       "id": "fr-jacque",
       "title": "Frère Jacque",
-      "artist": "Local Collection",
+      "artist": "Musique du Monde",
       "icon": "🔔",
       "file": "assets/fr-jacque.mp3",
       "accent": "#f6b87c",
@@ -105,6 +105,17 @@
       "artist": "Nursery Rhymes 123",
       "icon": "🐑",
       "file": "assets/lamb.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=wGY_rS0F4Rs"
+      }
+    },
+    {
+      "id": "john",
+      "title": "Are you Sleeping Brother John",
+      "artist": "LIV Kids",
+      "icon": "🔔",
+      "file": "assets/john.mp3",
       "accent": "#f6b87c",
       "extra": {
         "source": "https://www.youtube.com/watch?v=wGY_rS0F4Rs"
