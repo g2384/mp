@@ -120,6 +120,17 @@
       "extra": {
         "source": "https://www.youtube.com/watch?v=wGY_rS0F4Rs"
       }
+    },
+    {
+      "id": "frere_jacques",
+      "title": "Frere Jacques",
+      "artist": "Sing and Learn with Vicky",
+      "icon": "🔔",
+      "file": "assets/frere_jacques.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=F4H9MgzC88w"
+      }
     }
   ]
 }
