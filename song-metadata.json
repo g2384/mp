@@ -98,6 +98,17 @@
       "extra": {
         "source": "https://www.youtube.com/watch?v=XP-SGUEeK4I"
       }
+    },
+    {
+      "id": "lamb",
+      "title": "Mary had a Little Lamb",
+      "artist": "Nursery Rhymes 123",
+      "icon": "🐑",
+      "file": "assets/lamb.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=wGY_rS0F4Rs"
+      }
     }
   ]
 }
