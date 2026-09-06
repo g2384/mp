@@ -1,147 +1,46 @@
 from __future__ import annotations
 
 import json
-import re
+import unicodedata
 from pathlib import Path
+from typing import Any, cast
+
+from mutagen import MutagenError
+from mutagen.mp3 import MP3
 
 ROOT = Path(__file__).resolve().parent
-ASSET_DIR = ROOT / "assets"
 MANUAL_TRACKS_PATH = ROOT / "song-metadata.json"
 GENERATED_TRACKS_PATH = ROOT / "song-generated.json"
+SORT_FIELDS = ("artist", "title", "id", "file")
+
+JsonObject = dict[str, Any]
+GeneratedTrack = dict[str, str | float]
+
+def normalize_sort_text(value: str) -> str:
+    decomposed = unicodedata.normalize("NFKD", value)
+    return "".join(character for character in decomposed if not "\u0300" <= character <= "\u036f").lower()
 
 
-def normalize_title(value: str) -> str:
-    cleaned = str(value or "").replace("\x00", " ")
-    cleaned = re.sub(r"[_-]+", " ", cleaned)
-    cleaned = re.sub(r"[^A-Za-z0-9 ]+", " ", cleaned)
-    cleaned = re.sub(r"\s+", " ", cleaned).strip()
-    if not cleaned:
-        return "Untitled Song"
-    return " ".join(part.capitalize() for part in cleaned.split())
-
-
-def read_id3_text_frame(data: bytes, frame_id: bytes) -> str:
-    offset = 10
-    end = len(data)
-    while offset + 10 <= end:
-        if data[offset:offset + 4] == b"\x00\x00\x00\x00":
-            break
-
-        current_id = data[offset:offset + 4]
-        if len(current_id) < 4:
-            break
-
-        size_bytes = data[offset + 4:offset + 8]
-        if len(size_bytes) < 4:
-            break
-
-        frame_size = int.from_bytes(size_bytes, byteorder="big")
-        if frame_size <= 0:
-            break
-
-        body_start = offset + 10
-        body_end = body_start + frame_size
-        if body_end > end:
-            break
-
-        if current_id == frame_id:
-            payload = data[body_start:body_end]
-            if not payload:
-                return ""
-            encoding = payload[0]
-            text = payload[1:]
-            if encoding == 1:
-                text = text.decode("utf-16", errors="ignore")
-            elif encoding == 2:
-                text = text.decode("utf-16-be", errors="ignore")
-            else:
-                text = text.decode("latin-1", errors="ignore")
-            return text.replace("\x00", "").strip()
-
-        offset += 10 + frame_size
-
-    return ""
-
-
-def read_id3_metadata(path: Path) -> tuple[str, str]:
-    try:
-        data = path.read_bytes()
-    except OSError:
-        return normalize_title(path.stem), "Local Collection"
-
-    if len(data) >= 10 and data[:3] == b"ID3":
-        tag_size = 0
-        for i in range(6, 10):
-            tag_size = (tag_size << 7) | (data[i] & 0x7F)
-        tag_data = data[10:10 + tag_size]
-        title = read_id3_text_frame(tag_data, b"TIT2")
-        artist = read_id3_text_frame(tag_data, b"TPE1")
-        if title:
-            return normalize_title(title), normalize_title(artist) if artist else "Local Collection"
-
-    return normalize_title(path.stem), "Local Collection"
+def track_sort_key(track: JsonObject) -> tuple[str, ...]:
+    values = tuple(str(value) if value is not None else "" for value in (track.get(field) for field in SORT_FIELDS))
+    normalized_values = tuple(normalize_sort_text(value) for value in values)
+    return (*normalized_values, *values)
 
 
 def mp3_duration_seconds(path: Path) -> float:
-    data = path.read_bytes()
-    if len(data) < 4:
-        return 0.0
-
-    offset = 0
-    total_samples = 0
-    frame_count = 0
-    sample_rate = 44100
-
-    while offset + 4 <= len(data):
-        if (data[offset] & 0xFF) == 0xFF and (data[offset + 1] & 0xE0) == 0xE0:
-            header = int.from_bytes(data[offset:offset + 4], byteorder="big", signed=False)
-            version_index = (header >> 19) & 0x3
-            layer_index = (header >> 17) & 0x3
-            bitrate_index = (header >> 12) & 0xF
-            sample_rate_index = (header >> 10) & 0x3
-            padding = (header >> 9) & 0x1
-
-            if version_index in (0, 2, 3) and layer_index in (1, 2, 3) and bitrate_index != 15 and sample_rate_index != 3:
-                bitrate_table = {
-                    3: {1: {1: 32, 2: 40, 3: 48, 4: 56, 5: 64, 6: 80, 7: 96, 8: 112, 9: 128, 10: 160, 11: 192, 12: 224, 13: 256, 14: 320},
-                        2: {1: 8, 2: 16, 3: 24, 4: 32, 5: 40, 6: 48, 7: 56, 8: 64, 9: 80, 10: 96, 11: 112, 12: 128, 13: 144, 14: 160},
-                        3: {1: 32, 2: 40, 3: 48, 4: 56, 5: 64, 6: 80, 7: 96, 8: 112, 9: 128, 10: 144, 11: 160, 12: 176, 13: 192, 14: 224}},
-                    2: {1: {1: 32, 2: 48, 3: 56, 4: 64, 5: 80, 6: 96, 7: 112, 8: 128, 9: 144, 10: 160, 11: 176, 12: 192, 13: 224, 14: 256},
-                        2: {1: 8, 2: 16, 3: 24, 4: 32, 5: 40, 6: 48, 7: 56, 8: 64, 9: 80, 10: 96, 11: 112, 12: 128, 13: 144, 14: 160},
-                        3: {1: 32, 2: 40, 3: 48, 4: 56, 5: 64, 6: 80, 7: 96, 8: 112, 9: 128, 10: 144, 11: 160, 12: 176, 13: 192, 14: 224}},
-                    0: {1: {1: 8, 2: 16, 3: 24, 4: 32, 5: 40, 6: 48, 7: 56, 8: 64, 9: 80, 10: 96, 11: 112, 12: 128, 13: 144, 14: 160},
-                        2: {1: 8, 2: 16, 3: 24, 4: 32, 5: 40, 6: 48, 7: 56, 8: 64, 9: 80, 10: 96, 11: 112, 12: 128, 13: 144, 14: 160},
-                        3: {1: 8, 2: 16, 3: 24, 4: 32, 5: 40, 6: 48, 7: 56, 8: 64, 9: 80, 10: 96, 11: 112, 12: 128, 13: 144, 14: 160}},
-                }
-                sample_rate_table = {3: [44100, 48000, 32000], 2: [22050, 24000, 16000], 0: [11025, 12000, 8000]}
-                bitrate = bitrate_table.get(version_index, {}).get(layer_index, {}).get(bitrate_index, 0)
-                sample_rate = sample_rate_table.get(version_index, [44100, 48000, 32000])[sample_rate_index]
-                if bitrate and sample_rate:
-                    frame_size = int((144 * bitrate * 1000) / sample_rate + padding)
-                    if frame_size <= 0:
-                        offset += 1
-                        continue
-                    samples_per_frame = 1152 if version_index == 3 else 576
-                    total_samples += samples_per_frame
-                    frame_count += 1
-                    offset += max(frame_size, 1)
-                    continue
-
-        offset += 1
-
-    if frame_count == 0:
-        return 0.0
-
-    return total_samples / sample_rate
+    try:
+        return float(MP3(path).info.length)
+    except (MutagenError, OSError) as error:
+        raise ValueError(f"Could not read MP3 metadata: {path}") from error
 
 
 def format_length(seconds: float) -> str:
-    minutes = int(seconds // 60)
-    secs = int(seconds % 60)
+    total_seconds = max(0, int(seconds + 0.5))
+    minutes, secs = divmod(total_seconds, 60)
     return f"{minutes}:{secs:02d}"
 
 
-def load_manual_tracks() -> list[dict]:
+def load_manual_tracks() -> list[JsonObject]:
     if not MANUAL_TRACKS_PATH.exists():
         raise FileNotFoundError(f"Manual metadata file not found: {MANUAL_TRACKS_PATH.name}")
 
@@ -149,17 +48,30 @@ def load_manual_tracks() -> list[dict]:
     tracks = payload.get("tracks", payload) if isinstance(payload, dict) else payload
     if not isinstance(tracks, list):
         raise ValueError(f"{MANUAL_TRACKS_PATH.name} must contain a 'tracks' array.")
-    return tracks
+    if not all(isinstance(track, dict) for track in tracks):
+        raise ValueError(f"{MANUAL_TRACKS_PATH.name} must contain only track objects.")
+    return cast(list[JsonObject], tracks)
 
 
-def build_generated_entry(track: dict, source_path: Path) -> dict:
-    file_path = track.get("file") or source_path.relative_to(ROOT).as_posix()
-    file_path = file_path.replace("\\", "/")
+def build_generated_entry(track: JsonObject) -> GeneratedTrack:
+    file_value = track.get("file")
+    if not isinstance(file_value, str) or not file_value.strip():
+        raise ValueError(f"Manual track is missing a 'file' value: {track}")
+
+    file_path = file_value.replace("\\", "/")
+    source_path = (ROOT / file_path).resolve()
+    if not source_path.is_file():
+        raise FileNotFoundError(f"Missing audio file for manual track: {source_path}")
+
+    track_id = track.get("id")
+    if not isinstance(track_id, str) or not track_id.strip():
+        track_id = Path(file_path).stem
+
     duration_seconds = mp3_duration_seconds(source_path)
     file_size_mb = source_path.stat().st_size / (1024 * 1024)
 
     return {
-        "id": track.get("id") or Path(file_path).stem,
+        "id": track_id,
         "file": file_path,
         "sizeMB": round(file_size_mb, 2),
         "length": format_length(duration_seconds)
@@ -167,23 +79,11 @@ def build_generated_entry(track: dict, source_path: Path) -> dict:
 
 
 def main() -> None:
-    ASSET_DIR.mkdir(exist_ok=True)
-    manual_tracks = load_manual_tracks()
-    generated_tracks: list[dict] = []
-
-    for track in manual_tracks:
-        file_path = track.get("file")
-        if not file_path:
-            raise ValueError(f"Manual track is missing a 'file' value: {track}")
-
-        source_path = (ROOT / file_path).resolve()
-        if not source_path.exists():
-            raise FileNotFoundError(f"Missing audio file for manual track: {source_path}")
-
-        generated_tracks.append(build_generated_entry(track, source_path))
-
-    if not generated_tracks:
+    manual_tracks = sorted(load_manual_tracks(), key=track_sort_key)
+    if not manual_tracks:
         raise RuntimeError("No track entries were found in the manual metadata file.")
+
+    generated_tracks = [build_generated_entry(track) for track in manual_tracks]
 
     GENERATED_TRACKS_PATH.write_text(
         json.dumps({"tracks": generated_tracks}, ensure_ascii=False, indent=2) + "\n",
