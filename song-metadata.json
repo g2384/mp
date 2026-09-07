@@ -131,6 +131,28 @@
       "extra": {
         "source": "https://www.youtube.com/watch?v=F4H9MgzC88w"
       }
+    },
+    {
+      "id": "red",
+      "title": "小红帽",
+      "artist": "中文儿歌",
+      "icon": "👒",
+      "file": "assets/red.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.bilibili.com/video/BV1W8411R74e"
+      }
+    },
+    {
+      "id": "carrot",
+      "title": "拔萝卜",
+      "artist": "中文儿歌",
+      "icon": "🥕",
+      "file": "assets/carrot.mp3",
+      "accent": "#f6b87c",
+      "extra": {
+        "source": "https://www.youtube.com/watch?v=gnD1zHblo0Q&list=PLxs7Tz017_6-1VPQ9ngHuiECwvsyPApQr"
+      }
     }
   ]
 }
